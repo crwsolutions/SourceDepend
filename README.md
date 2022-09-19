@@ -1,6 +1,6 @@
 # Source Depend
 
-A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) to saves you from writing the DI code in your constructor.
+A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) which saves you from writing the DI code in your constructor.
 These will be written during compile time.
 
 [![NuGet version (sourcedepend)](https://img.shields.io/nuget/v/sourcedepend?color=blue)](https://www.nuget.org/packages/sourcedepend/)
@@ -19,6 +19,24 @@ public class ExampleService
     public string GetValue() => anotherService.Value;
 }
 ```
+
+Because you constructor is highjacked, there is alternative method to do construction work
+
+```csharp
+public class ExampleService
+{
+    [Dependency]
+    private readonly AnotherService anotherService;
+
+    ///This method will be called after the field assignments
+    partial void Construct() {
+        anotherService.ConstructValue = "Hello from construct!";
+    }
+
+    public string GetValue() => anotherService.Value;
+}
+```
+
 
 ## Installing
 
