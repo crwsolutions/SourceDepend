@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PackageId>SourceDepend</PackageId>
+        <VersionSuffix Condition="'$(VersionSuffix)' == ''">0</VersionSuffix>
+        <Version>0.1.$(VersionSuffix)</Version>
+        <Authors>Colin Wilmans</Authors>
+        <PackageDescription>A source generator for C# that uses Roslyn (the C# compiler) to allow you to generate your constructor for injection during compile time.</PackageDescription>
+        <RepositoryUrl>https://github.com/crwsolutions/sourcedepend.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>source generator</PackageTags>
+        <PackageProjectUrl>https://github.com/crwsolutions/sourcedepend</PackageProjectUrl>
+        <Copyright>(c) Colin Wilmans</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IsPackable>true</IsPackable>
+        <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+        <IsRoslynComponent>true</IsRoslynComponent>
+  </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.1.0" />
+    </ItemGroup>
+</Project>
+
