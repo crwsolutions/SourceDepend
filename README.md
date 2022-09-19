@@ -1,12 +1,9 @@
 # Source Depend
 
-A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) to allow you to generate
-your dependencies injection during compile time. By doing this
-you avoid using reflection and services are automatically
-registered.
+A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) to saves you from writing the DI code in your constructor.
+These will be written during compile time.
 
 [![NuGet version (sourcedepend)](https://img.shields.io/nuget/v/sourcedepend?color=blue)](https://www.nuget.org/packages/sourcedepend/)
-[![Build](https://github.com/crwsolutions/sourcedepend/actions/workflows/dotnet.yml/badge.svg)](https://github.com/crwsolutions/sourcedepend/actions/workflows/dotnet.yml)
 [![License](https://img.shields.io/github/license/crwsolutions/sourcedepend.svg)](https://github.com/crwsolutions/sourcedepend/blob/master/LICENSE.txt)
 
 ## How to use it
