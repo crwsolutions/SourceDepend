@@ -11,7 +11,7 @@ These will be written during compile time.
 Install it and add an attribute to the fields you want be set in your constructor, like so:
 
 ```csharp
-public class ExampleService
+public partial class ExampleService
 {
     [Dependency]
     private readonly AnotherService anotherService;
@@ -23,7 +23,7 @@ public class ExampleService
 Because you constructor is highjacked, there is alternative method to do construction work
 
 ```csharp
-public class ExampleService
+public partial class ExampleService
 {
     [Dependency]
     private readonly AnotherService anotherService;
