@@ -40,7 +40,7 @@ public partial class ExampleService
 
 ## Installing
 
-The package is available ([on NuGet](https://www.nuget.org/packages/sourcedepend).
+The package is available [on NuGet](https://www.nuget.org/packages/sourcedepend).
 To install from the command line:
 
 ```shell
