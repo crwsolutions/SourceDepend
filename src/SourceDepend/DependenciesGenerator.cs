@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SourceInject;
+namespace SourceDepend;
 
 [Generator]
 public class DependenciesGenerator : ISourceGenerator
@@ -66,6 +66,9 @@ namespace {namespaceName}
         source.Append(string.Join(", ", GetParams(fields)));
         source.AppendLine(")");
         source.AppendLine("        {");
+        source.AppendLine();
+        source.AppendLine("            PreInject();");
+        source.AppendLine();
 
         foreach (var field in fields)
         {
@@ -73,10 +76,11 @@ namespace {namespaceName}
         }
 
         source.AppendLine();
-        source.AppendLine("            Construct();");
+        source.AppendLine("            PostInject();");
         source.AppendLine("        }");
         source.AppendLine();
-        source.AppendLine("        partial void Construct();");
+        source.AppendLine("        partial void PreInject();");
+        source.AppendLine("        partial void PostInject();");
         source.AppendLine("    }");
         source.AppendLine("}");
         return source.ToString();

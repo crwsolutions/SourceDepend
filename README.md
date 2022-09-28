@@ -28,10 +28,17 @@ public partial class ExampleService
     [Dependency]
     private readonly AnotherService anotherService;
 
-    ///This method will be called after the field assignments
-    partial void Construct() {
-        anotherService.ConstructValue = "Hello from construct!";
+    ///This method will be called before the generated field assignments
+    partial void PreInject()
+    {
+        if (anotherService == null)
+        {
+            Console.WriteLine("Hello from pre-construct! anotherSerice == null");
+        }
     }
+
+    ///This method will be called after the generated field assignments
+    partial void PostInject() => anotherService.ConstructValue = "Hello from post-construct!";
 
     public string GetValue() => anotherService.Value;
 }

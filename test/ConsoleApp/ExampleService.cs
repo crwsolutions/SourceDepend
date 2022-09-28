@@ -11,7 +11,14 @@ public partial class ExampleService
     ////[Dependency("BindingContext")]
     ////AnotherService viewModel => BindingContext as AnotherService;
 
-    partial void Construct() => anotherService.ConstructValue = "Hello from construct!";
+    partial void PreInject()
+    {
+        if (anotherService == null)
+        {
+            Console.WriteLine("Hello from pre-construct! anotherSerice == null");
+        }
+    }
+    partial void PostInject() => anotherService.ConstructValue = "Hello from post-construct!";
 
     public string GetValue() => anotherService.Value;
     public string GetConstructValue() => anotherService.ConstructValue;
