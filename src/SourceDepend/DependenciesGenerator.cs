@@ -69,7 +69,7 @@ namespace {namespaceName}
         source.Append(string.Join(", ", GetParams(symbols)));
         source.AppendLine(")");
         source.AppendLine("        {");
-        source.AppendLine("            PreInject();");
+        source.AppendLine("            PreConstruct();");
         source.AppendLine();
 
         foreach (var symbol in symbols)
@@ -87,11 +87,11 @@ namespace {namespaceName}
         }
 
         source.AppendLine();
-        source.AppendLine("            PostInject();");
+        source.AppendLine("            PostConstruct();");
         source.AppendLine("        }");
         source.AppendLine();
-        source.AppendLine("        partial void PreInject();");
-        source.AppendLine("        partial void PostInject();");
+        source.AppendLine("        partial void PreConstruct();");
+        source.AppendLine("        partial void PostConstruct();");
         source.AppendLine("    }");
         source.AppendLine("}");
         return source.ToString();

@@ -6,7 +6,7 @@ namespace ConsoleApp;
 public partial class ExampleService
 {
     [Dependency]
-    private readonly AnotherService anotherService;
+    private readonly IAnotherService anotherService;
 
     protected object BindingContext;
 
@@ -16,22 +16,24 @@ public partial class ExampleService
     [Dependency(nameof(BindingContext))]
     AnotherService ViewModel => BindingContext as AnotherService;
 
-    partial void PreInject()
+    partial void PreConstruct()
     {
         if (anotherService == null)
         {
             Console.WriteLine("Hello from pre-construct! anotherSerice == null");
         }
     }
-    partial void PostInject() => anotherService.ConstructValue = "Hello from post-construct!";
+    partial void PostConstruct() => anotherService.ConstructValue = "Hello from post-construct!";
 
     public string GetValue() => anotherService.Value;
-    public string GetConstructValue() => anotherService.ConstructValue;
+    public string? GetConstructValue() => anotherService.ConstructValue;
 }
 
 public interface IAnotherService
 {
     string Value { get; }
+
+    string? ConstructValue { get; set; }
 }
 
 [Inject(ServiceLifetime.Singleton)]
@@ -41,7 +43,3 @@ public class AnotherService : IAnotherService
     public string? ConstructValue { get; set; }
 }
 
-interface IGeneric { }
-interface IGeneric<T> : IGeneric { }
-[InjectTransient]
-class C : IGeneric<string> { }

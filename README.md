@@ -8,7 +8,7 @@ These will be written during compile time.
 
 ## How to use it
 
-Install it and add an attribute to the fields you want be set in your constructor, like so:
+Install it and add an attribute to the fields and properties you want be set in your constructor, like so:
 
 ```csharp
 public partial class ExampleService
@@ -16,9 +16,23 @@ public partial class ExampleService
     [Dependency]
     private readonly AnotherService anotherService;
 
+    [Dependency]
+    AnotherService Prop { get; }
+
     public string GetValue() => anotherService.Value;
 }
 ```
+
+It is also possible to assign an anternative variable
+
+```csharp
+public partial class ExampleService
+{
+    [Dependency(nameof(BindingContext))]
+    AnotherService ViewModel => BindingContext as AnotherService;
+}
+```
+
 
 Because you constructor is highjacked, there is alternative method to do construction work
 
@@ -29,7 +43,7 @@ public partial class ExampleService
     private readonly AnotherService anotherService;
 
     ///This method will be called before the generated field assignments
-    partial void PreInject()
+    partial void PreConstruct()
     {
         if (anotherService == null)
         {
@@ -38,12 +52,35 @@ public partial class ExampleService
     }
 
     ///This method will be called after the generated field assignments
-    partial void PostInject() => anotherService.ConstructValue = "Hello from post-construct!";
+    partial void PostConstruct() => anotherService.ConstructValue = "Hello from post-construct!";
 
     public string GetValue() => anotherService.Value;
 }
 ```
 
+These samples give more or less the following generated code:
+
+```csharp
+pnamespace ConsoleApp
+{
+    public partial class ExampleService
+    {
+        public ExampleService(ConsoleApp.IAnotherService anotherService, ConsoleApp.AnotherService prop, ConsoleApp.AnotherService viewModel)
+        {
+            PreConstruct();
+
+            this.anotherService = anotherService;
+            Prop = prop;
+            BindingContext = viewModel;
+
+            PostConstruct();
+        }
+
+        partial void PreConstruct();
+        partial void PostConstruct();
+    }
+}
+```
 
 ## Installing
 
