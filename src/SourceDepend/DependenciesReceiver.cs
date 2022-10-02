@@ -9,12 +9,14 @@ internal class DependenciesReceiver : ISyntaxContextReceiver
 {
     private const string attributeDisplayName = "DependencyAttribute";
     
-    public List<IFieldSymbol>? Fields { get; private set; }
+    public List<ISymbol>? Symbols { get; private set; }
 
     public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
         if (context.Node is FieldDeclarationSyntax fieldDeclarationSyntax && fieldDeclarationSyntax.AttributeLists.Count > 0)
         {
+            //System.Diagnostics.Debugger.Launch();
+
             foreach (var variable in fieldDeclarationSyntax.Declaration.Variables)
             {
                 if (context.SemanticModel.GetDeclaredSymbol(variable) is IFieldSymbol fieldSymbol)
@@ -23,10 +25,26 @@ internal class DependenciesReceiver : ISyntaxContextReceiver
                     {
                         if (att.AttributeClass?.ToDisplayString() == attributeDisplayName)
                         {
-                            Fields ??= new List<IFieldSymbol>();
-                            Fields.Add(fieldSymbol);
+                            Symbols ??= new List<ISymbol>();
+                            Symbols.Add(fieldSymbol);
                             break; //break attributes foreach
                         }
+                    }
+                }
+            }
+        }
+
+        if (context.Node is PropertyDeclarationSyntax propertyDeclarationSyntax && propertyDeclarationSyntax.AttributeLists.Count > 0)
+        {
+            if (context.SemanticModel.GetDeclaredSymbol(propertyDeclarationSyntax) is IPropertySymbol propertySymbol)
+            {
+                foreach (var att in propertySymbol.GetAttributes())
+                {
+                    if (att.AttributeClass?.ToDisplayString() == attributeDisplayName)
+                    {
+                        Symbols ??= new List<ISymbol>();
+                        Symbols.Add(propertySymbol);
+                        break; //break attributes foreach
                     }
                 }
             }

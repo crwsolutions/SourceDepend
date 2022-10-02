@@ -8,8 +8,13 @@ public partial class ExampleService
     [Dependency]
     private readonly AnotherService anotherService;
 
-    ////[Dependency("BindingContext")]
-    ////AnotherService viewModel => BindingContext as AnotherService;
+    protected object BindingContext;
+
+    [Dependency]
+    AnotherService Prop { get; }
+
+    [Dependency(nameof(BindingContext))]
+    AnotherService ViewModel => BindingContext as AnotherService;
 
     partial void PreInject()
     {
