@@ -3,6 +3,18 @@
 A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) which saves you from writing the DI plumming in your constructor.
 These will be written during compile time.
 
+So you do not have to write code like this, bacause it is generated:
+
+```csharp
+public partial class ExampleService
+{
+    public ExampleService(ConsoleApp.IAnotherService anotherService)
+    {
+        this.anotherService = anotherService;
+    }
+}
+```
+
 [![NuGet version (sourcedepend)](https://img.shields.io/nuget/v/sourcedepend?color=blue)](https://www.nuget.org/packages/sourcedepend/)
 [![License](https://img.shields.io/github/license/crwsolutions/sourcedepend.svg)](https://github.com/crwsolutions/sourcedepend/blob/master/LICENSE.txt)
 
@@ -21,7 +33,7 @@ public partial class ExampleService
 }
 ```
 
-It is also possible to assign to an anternative property
+It is also possible that the generated assignment is to an anternative property
 
 ```csharp
 public partial class ExampleService
