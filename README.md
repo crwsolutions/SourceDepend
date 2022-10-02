@@ -3,7 +3,7 @@
 A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) which saves you from writing the DI plumming in your constructor.
 These will be written during compile time.
 
-So you do not have to write code like this, bacause it is generated:
+So you do not have to write code like this, because it is generated:
 
 ```csharp
 public partial class ExampleService
