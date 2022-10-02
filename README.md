@@ -1,6 +1,6 @@
 # Source Depend
 
-A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) which saves you from writing the DI code in your constructor.
+A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) which saves you from writing the DI plumming in your constructor.
 These will be written during compile time.
 
 [![NuGet version (sourcedepend)](https://img.shields.io/nuget/v/sourcedepend?color=blue)](https://www.nuget.org/packages/sourcedepend/)
@@ -18,12 +18,10 @@ public partial class ExampleService
 
     [Dependency]
     AnotherService Prop { get; }
-
-    public string GetValue() => anotherService.Value;
 }
 ```
 
-It is also possible to assign an anternative variable
+It is also possible to assign to an anternative property
 
 ```csharp
 public partial class ExampleService
@@ -33,8 +31,7 @@ public partial class ExampleService
 }
 ```
 
-
-Because you constructor is highjacked, there is alternative method to do construction work
+Because you constructor is highjacked, there are the alternative methods PreConstruct/PostConstruct to do your construction work
 
 ```csharp
 public partial class ExampleService
@@ -45,20 +42,15 @@ public partial class ExampleService
     ///This method will be called before the generated field assignments
     partial void PreConstruct()
     {
-        if (anotherService == null)
-        {
-            Console.WriteLine("Hello from pre-construct! anotherSerice == null");
-        }
+        Initialize()
     }
 
     ///This method will be called after the generated field assignments
     partial void PostConstruct() => anotherService.ConstructValue = "Hello from post-construct!";
-
-    public string GetValue() => anotherService.Value;
 }
 ```
 
-These samples give more or less the following generated code:
+These samples give combined the following generated code:
 
 ```csharp
 pnamespace ConsoleApp
