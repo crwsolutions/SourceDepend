@@ -39,13 +39,13 @@ public partial class ExampleService
     [Dependency]
     private readonly AnotherService anotherService;
 
-    ///This method will be called before the generated field assignments
+    ///This method will be called before the generated assignments
     partial void PreConstruct()
     {
         Initialize()
     }
 
-    ///This method will be called after the generated field assignments
+    ///This method will be called after the generated assignments
     partial void PostConstruct() => anotherService.ConstructValue = "Hello from post-construct!";
 }
 ```
@@ -53,7 +53,7 @@ public partial class ExampleService
 These samples give combined the following generated code:
 
 ```csharp
-pnamespace ConsoleApp
+namespace ConsoleApp
 {
     public partial class ExampleService
     {
@@ -92,8 +92,6 @@ The main supported IDE for development is Visual Studio 2019.
 Questions, comments, bug reports, and pull requests are all welcome.
 Bug reports that include steps to reproduce (including code) are
 preferred. Even better, make them in the form of pull requests.
-Before you start to work on an existing issue, check if it is not assigned
-to anyone yet, and if it is, talk to that person.
 
 ## Maintainers/Core team
 
