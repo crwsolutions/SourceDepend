@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <PackageId>SourceDepend</PackageId>
         <VersionSuffix Condition="'$(VersionSuffix)' == ''">0</VersionSuffix>
         <Version>0.2.$(VersionSuffix)</Version>

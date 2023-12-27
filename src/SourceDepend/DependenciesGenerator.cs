@@ -27,73 +27,63 @@ internal sealed class DependencyAttribute : System.Attribute
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput(context => context.AddSource("Dependency.Generated", attributeText));
+        context.RegisterPostInitializationOutput(context => context.AddSource("Dependency.Generated.g.cs", attributeText));
 
         var provider = context.SyntaxProvider.CreateSyntaxProvider(
-                    predicate: static (node, _) => node is ClassDeclarationSyntax,
-                    transform: static (ctx, _) => ((ClassDeclarationSyntax)ctx.Node, ctx.SemanticModel))
-                .Where(m => m.Item1 is not null);
+            predicate: static (node, _) => node is ClassDeclarationSyntax,
+            transform: static (ctx, _) => ((ClassDeclarationSyntax)ctx.Node, ctx.SemanticModel))
+            .Where(m => m.Item1 is not null && m.SemanticModel is not null);
 
-        var compilation = context.CompilationProvider.Combine(provider.Collect());
+        var compilation = context.CompilationProvider;
 
-        context.RegisterSourceOutput(compilation,
-            (spc, source) => Execute(spc, source.Right));
-
+        context.RegisterSourceOutput(provider, Execute);
     }
 
-    private void Execute(SourceProductionContext context, ImmutableArray<(ClassDeclarationSyntax ClassDeclarationSyntax, SemanticModel SemanticModel)> classes)
+    private void Execute(SourceProductionContext context, (ClassDeclarationSyntax ClassDeclarationSyntax, SemanticModel SemanticModel) classSyntax)
     {
-        foreach (var classSyntax in classes)
+        List<ISymbol>? symbols = null;
+        var members = classSyntax.ClassDeclarationSyntax.Members;
+
+        //if (!Debugger.IsAttached) Debugger.Launch();
+
+        foreach (var member in members)
         {
-            if (classSyntax.ClassDeclarationSyntax == null || classSyntax.SemanticModel == null)
+            if (member.AttributeLists.Any() == false)
             {
                 continue;
             }
 
-            List<ISymbol>? symbols = null;
-            var members = classSyntax.ClassDeclarationSyntax.Members;
-
-            //if (!Debugger.IsAttached) Debugger.Launch();
-
-            foreach (var member in members)
+            if (member is FieldDeclarationSyntax fieldSyntax)
             {
-                if (member.AttributeLists.Any() == false)
+                foreach (var variable in fieldSyntax.Declaration.Variables)
                 {
-                    continue;
-                }
-
-                if (member is FieldDeclarationSyntax fieldSyntax)
-                {
-                    foreach (var variable in fieldSyntax.Declaration.Variables)
-                    {
-                        if (classSyntax.SemanticModel.GetDeclaredSymbol(variable) is ISymbol symbol)
-                        {
-                            AddSymbolIfTagged(ref symbols, symbol);
-                        }
-                    }
-                }
-                else if (member.IsKind(SyntaxKind.PropertyDeclaration))
-                {
-                    if (classSyntax.SemanticModel.GetDeclaredSymbol(member) is ISymbol symbol)
+                    if (classSyntax.SemanticModel.GetDeclaredSymbol(variable) is ISymbol symbol)
                     {
                         AddSymbolIfTagged(ref symbols, symbol);
                     }
                 }
             }
-
-            if (symbols != null)
+            else if (member.IsKind(SyntaxKind.PropertyDeclaration))
             {
-                var classSymbol = classSyntax.SemanticModel.GetDeclaredSymbol(classSyntax.ClassDeclarationSyntax);
-                if (classSymbol == null)
+                if (classSyntax.SemanticModel.GetDeclaredSymbol(member) is ISymbol symbol)
                 {
-                    continue;
+                    AddSymbolIfTagged(ref symbols, symbol);
                 }
+            }
+        }
 
-                var classSource = ProcessClass(classSymbol, symbols);
-                if (classSource != null)
-                {
-                    context.AddSource($"{classSymbol.Name}_Dependency.cs", SourceText.From(classSource, Encoding.UTF8));
-                }
+        if (symbols != null)
+        {
+            var classSymbol = classSyntax.SemanticModel.GetDeclaredSymbol(classSyntax.ClassDeclarationSyntax);
+            if (classSymbol == null)
+            {
+                return;
+            }
+
+            var classSource = ProcessClass(classSymbol, symbols);
+            if (classSource != null)
+            {
+                context.AddSource($"{classSymbol.Name}_Dependency.g.cs", SourceText.From(classSource, Encoding.UTF8));
             }
         }
     }
@@ -120,12 +110,15 @@ internal sealed class DependencyAttribute : System.Attribute
 
         var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
         var sealedString = classSymbol.IsSealed ? "sealed " : "";
-        string accessibilityKeyword = SyntaxFacts.GetText(classSymbol.DeclaredAccessibility);
+        var accessibilityKeyword = SyntaxFacts.GetText(classSymbol.DeclaredAccessibility);
 
         // begin building the generated source
-        var source = new StringBuilder($@"
+        var source = new StringBuilder($@"// <auto-generated/>
+#pragma warning disable
+#nullable enable
 namespace {namespaceName}
 {{
+    /// <inheritdoc/>
     {accessibilityKeyword} {sealedString}partial class {classSymbol.Name}
     {{
 ");
