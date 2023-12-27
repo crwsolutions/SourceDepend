@@ -119,12 +119,14 @@ internal sealed class DependencyAttribute : System.Attribute
         }
 
         var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+        var sealedString = classSymbol.IsSealed ? "sealed " : "";
+        string accessibilityKeyword = SyntaxFacts.GetText(classSymbol.DeclaredAccessibility);
 
         // begin building the generated source
         var source = new StringBuilder($@"
 namespace {namespaceName}
 {{
-    public partial class {classSymbol.Name}
+    {accessibilityKeyword} {sealedString}partial class {classSymbol.Name}
     {{
 ");
         _ = source.Append($"        public {classSymbol.Name}(");

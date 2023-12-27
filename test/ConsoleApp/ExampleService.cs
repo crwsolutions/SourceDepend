@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace ConsoleApp;
 
 [Inject]
-public partial class ExampleService
+internal sealed partial class ExampleService
 {
     [Dependency]
     private readonly IAnotherService anotherService;
