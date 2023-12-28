@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using SourceDepend.CodeGenerators;
 using SourceDepend.Extensions;
+using SourceDepend.Model;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,8 @@ public partial class DependenciesGenerator : IIncrementalGenerator
             $"{classData.ClassSymbol.Name}_Dependency.g.cs",
             SourceText.From(DependencyClassCodeGenerator.Generate(
                 classData.ClassSymbol,
-                classData.TaggedMemberSymbols),
+                classData.TaggedMemberSymbols,
+                classData.TaggedBaseMemberSymbols),
             Encoding.UTF8));
     }
 }

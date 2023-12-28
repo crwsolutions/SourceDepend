@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace ConsoleApp;
 
 [Inject]
-internal sealed partial class ExampleService
+internal partial class ExampleService : BaseExampleService
 {
     [Dependency]
     private readonly IAnotherService anotherService;
@@ -43,3 +43,15 @@ public class AnotherService : IAnotherService
     public string? ConstructValue { get; set; }
 }
 
+public interface IForBaseService
+{
+    string Value { get; }
+
+    string? ConstructValue { get; set; }
+}
+
+internal partial class BaseExampleService
+{
+    [Dependency]
+    private readonly IForBaseService _someBaseService;
+}

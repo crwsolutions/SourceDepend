@@ -10,7 +10,7 @@ namespace SourceDepend.CodeGenerators
 {
     internal static class DependencyClassCodeGenerator
     {
-        internal static string Generate(INamedTypeSymbol classSymbol, List<ISymbol> symbols)
+        internal static string Generate(INamedTypeSymbol classSymbol, List<ISymbol> symbols, List<ISymbol>? baseSymbols)
         {
             //if (!classSymbol.ContainingSymbol.Equals(classSymbol.ContainingNamespace, SymbolEqualityComparer.Default))
             //{
@@ -33,7 +33,20 @@ namespace {namespaceName}
 ");
             _ = source.Append($"        public {classSymbol.Name}(");
             _ = source.Append(string.Join(", ", GetParams(symbols)));
-            _ = source.AppendLine(")");
+            if (baseSymbols is not null)
+            {
+                _ = source.Append(", ");
+                _ = source.Append(string.Join(", ", GetParams(baseSymbols)));
+            }
+            _ = source.Append(")");
+            if (baseSymbols is not null)
+            {
+                _ = source.Append(" : base(");
+                _ = source.Append(string.Join(", ", GetBaseParams(baseSymbols)));
+                _ = source.Append(")");
+            }
+
+            _ = source.AppendLine();
             _ = source.AppendLine("        {");
             _ = source.AppendLine("            PreConstruct();");
             _ = source.AppendLine();
@@ -96,6 +109,26 @@ namespace {namespaceName}
                         break;
                     case IPropertySymbol property:
                         variables[i] = $@"{property.Type} {property.Name.ToCamelCase()}";
+                        break;
+                }
+            }
+
+            return variables;
+        }
+
+        private static string[] GetBaseParams(List<ISymbol> symbols)
+        {
+            var variables = new string[symbols.Count];
+            for (var i = 0; i < symbols.Count; i++)
+            {
+                var symbol = symbols[i];
+                switch (symbol)
+                {
+                    case IFieldSymbol field:
+                        variables[i] = field.Name.TrimStart('_');
+                        break;
+                    case IPropertySymbol property:
+                        variables[i] = property.Name.ToCamelCase();
                         break;
                 }
             }

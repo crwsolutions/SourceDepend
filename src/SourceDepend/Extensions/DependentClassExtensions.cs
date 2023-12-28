@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SourceDepend.Model;
 using System.Collections.Generic;
-using static SourceDepend.DependenciesGenerator;
 
 namespace SourceDepend.Extensions
 {
@@ -12,12 +12,12 @@ namespace SourceDepend.Extensions
 
         internal static DependencyClassData? ToDependencyClass(this GeneratorSyntaxContext ctx)
         {
+            //if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
+
             var ClassDeclarationSyntax = (ClassDeclarationSyntax)ctx.Node;
-
             List<ISymbol>? symbols = null;
-            var members = ClassDeclarationSyntax.Members;
 
-            foreach (var member in members)
+            foreach (var member in ClassDeclarationSyntax.Members)
             {
                 if (member.AttributeLists.Any() == false)
                 {
@@ -46,7 +46,23 @@ namespace SourceDepend.Extensions
             if (symbols != null)
             {
                 var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(ClassDeclarationSyntax);
-                return classSymbol == null ? null : new DependencyClassData(classSymbol, symbols);
+                List<ISymbol>? baseSymbols = null;
+                if (classSymbol?.BaseType != null)
+                {
+                    var members = classSymbol.BaseType.GetMembers();
+                    {
+                        foreach (var member in members)
+                        {
+                            if (member is IFieldSymbol or
+                                IPropertySymbol)
+                            {
+                                AddSymbolIfTagged(ref baseSymbols, member);
+                            }
+                        }
+                    }
+                }
+
+                return classSymbol == null ? null : new DependencyClassData(classSymbol, symbols, baseSymbols);
             }
 
             return null;
@@ -60,7 +76,7 @@ namespace SourceDepend.Extensions
                 {
                     symbols ??= [];
                     symbols.Add(fieldSymbol);
-                    break; //break attributes foreach
+                    return;
                 }
             }
         }
