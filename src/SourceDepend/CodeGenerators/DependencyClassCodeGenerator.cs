@@ -12,11 +12,6 @@ namespace SourceDepend.CodeGenerators
     {
         internal static string Generate(INamedTypeSymbol classSymbol, List<ISymbol> symbols, List<ISymbol>? baseSymbols)
         {
-            //if (!classSymbol.ContainingSymbol.Equals(classSymbol.ContainingNamespace, SymbolEqualityComparer.Default))
-            //{
-            //    return null; //TODO: issue a diagnostic that it must be top level
-            //}
-
             var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
             var sealedString = classSymbol.IsSealed ? "sealed " : "";
             var accessibilityKeyword = SyntaxFacts.GetText(classSymbol.DeclaredAccessibility);
