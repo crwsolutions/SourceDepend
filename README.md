@@ -7,11 +7,11 @@ A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (
 
 ### Version history
 
-0.1. First implementation.
-0.2. Complete rewrite from ISourceGenerator to IIncrementalGenerator, this should boost performance
-    - keep sealed and accessibility intact.
-0.3. Complete Rewrite: reorganized the code.
-    - Allow one level of inheritance. 
+- v0.1\. First implementation.
+- v0.2\. Complete rewrite from ISourceGenerator to IIncrementalGenerator, this should boost performance
+    + keep sealed and accessibility intact.
+- v0.3\. Complete Rewrite: reorganized the code.
+    + Allow one level of inheritance. 
 
 ## How to use it
 
