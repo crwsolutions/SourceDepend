@@ -7,7 +7,7 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <PackageId>SourceDepend</PackageId>
         <VersionSuffix Condition="'$(VersionSuffix)' == ''">0</VersionSuffix>
-        <Version>0.2.$(VersionSuffix)</Version>
+        <Version>0.3.$(VersionSuffix)</Version>
         <Authors>Colin Wilmans</Authors>
         <PackageDescription>A source generator for C# that uses Roslyn (the C# compiler) to allow you to generate your constructor for injection during compile time.</PackageDescription>
         <RepositoryUrl>https://github.com/crwsolutions/sourcedepend.git</RepositoryUrl>
@@ -21,9 +21,14 @@
         <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
         <IsRoslynComponent>true</IsRoslynComponent>
         <Description>Source generator, generating DI plumming in your constructor</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="..\..\README.md">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
