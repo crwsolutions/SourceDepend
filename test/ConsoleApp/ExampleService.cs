@@ -50,6 +50,14 @@ public interface IForBaseService
     string? ConstructValue { get; set; }
 }
 
+[Inject(ServiceLifetime.Singleton)]
+public class ForBaseService : IForBaseService
+{
+    public string Value => throw new NotImplementedException();
+
+    public string? ConstructValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+}
+
 internal partial class BaseExampleService
 {
     [Dependency]
