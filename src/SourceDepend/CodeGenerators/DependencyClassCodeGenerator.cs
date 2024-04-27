@@ -40,9 +40,24 @@ namespace {namespaceName}
                 _ = source.Append(string.Join(", ", GetBaseParams(baseSymbols)));
                 _ = source.Append(")");
             }
-
             _ = source.AppendLine();
             _ = source.AppendLine("        {");
+            _ = source.AppendLine();
+            _ = source.AppendLine("#if NET6_0_OR_GREATER");
+            foreach (var symbol in symbols)
+            {
+                switch (symbol)
+                {
+                    case IFieldSymbol field:
+                        _ = source.AppendLine($@"            ArgumentNullException.ThrowIfNull({field.Name.TrimStart('_')});");
+                        break;
+                    case IPropertySymbol property:
+                        var name = GetPropName(property, property.GetAttributes());
+                        _ = source.AppendLine($@"            ArgumentNullException.ThrowIfNull({property.Name.ToCamelCase()});");
+                        break;
+                }
+            }
+            _ = source.AppendLine("#endif");
             _ = source.AppendLine("            PreConstruct();");
             _ = source.AppendLine();
 
