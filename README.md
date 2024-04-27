@@ -12,6 +12,7 @@ A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (
     + keep sealed and accessibility intact.
 - v0.3\. Complete Rewrite: reorganized the code.
     + Allow one level of inheritance. 
+- v0.4\. Added null-checks.
 
 ## How to use it
 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,7 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <PackageId>SourceDepend</PackageId>
         <VersionSuffix Condition="'$(VersionSuffix)' == ''">0</VersionSuffix>
-        <Version>0.3.$(VersionSuffix)</Version>
+        <Version>0.4.$(VersionSuffix)</Version>
         <Authors>Colin Wilmans</Authors>
         <PackageDescription>A source generator for C# that uses Roslyn (the C# compiler) to allow you to generate your constructor for injection during compile time.</PackageDescription>
         <RepositoryUrl>https://github.com/crwsolutions/sourcedepend.git</RepositoryUrl>
@@ -22,6 +22,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <Description>Source generator, generating DI plumming in your constructor</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageReleaseNotes>Added null checks</PackageReleaseNotes>
   </PropertyGroup>
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />

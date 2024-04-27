@@ -1,8 +1,10 @@
 1. Update the version of the package in the SourceDepend project
+1. Update release notes
+1. Update release notes in README.md
 2. Put the solution configuration on 'Release'
 3. Select the SourceDepend project in the solution explorer
 4. Go to: Build > Pack SourceDepend
-5. Select the generated nuget package in de file explorer.
+5. Select the generated nuget package in de file explorer (bin\Release).
 6. Login into Nuget
 7. Select Upload
 8. Drag the package to the upload control.
