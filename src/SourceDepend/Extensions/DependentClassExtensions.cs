@@ -3,81 +3,91 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SourceDepend.Model;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace SourceDepend.Extensions
+namespace SourceDepend.Extensions;
+
+internal static class DependentClassExtensions
 {
-    internal static class DependentClassExtensions
+    private const string attributeDisplayName = "DependencyAttribute";
+
+    internal static DependencyClassData? ToDependencyClass(this GeneratorSyntaxContext ctx)
     {
-        private const string attributeDisplayName = "DependencyAttribute";
+        //if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
 
-        internal static DependencyClassData? ToDependencyClass(this GeneratorSyntaxContext ctx)
+        var ClassDeclarationSyntax = (ClassDeclarationSyntax)ctx.Node;
+        List<ISymbol>? symbols = null;
+
+        foreach (var member in ClassDeclarationSyntax.Members)
         {
-            //if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
-
-            var ClassDeclarationSyntax = (ClassDeclarationSyntax)ctx.Node;
-            List<ISymbol>? symbols = null;
-
-            foreach (var member in ClassDeclarationSyntax.Members)
+            if (member.AttributeLists.Any() == false)
             {
-                if (member.AttributeLists.Any() == false)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (member is FieldDeclarationSyntax fieldSyntax)
+            if (member is FieldDeclarationSyntax fieldSyntax)
+            {
+                foreach (var variable in fieldSyntax.Declaration.Variables)
                 {
-                    foreach (var variable in fieldSyntax.Declaration.Variables)
-                    {
-                        if (ctx.SemanticModel.GetDeclaredSymbol(variable) is ISymbol symbol)
-                        {
-                            AddSymbolIfTagged(ref symbols, symbol);
-                        }
-                    }
-                }
-                else if (member.IsKind(SyntaxKind.PropertyDeclaration))
-                {
-                    if (ctx.SemanticModel.GetDeclaredSymbol(member) is ISymbol symbol)
+                    if (ctx.SemanticModel.GetDeclaredSymbol(variable) is ISymbol symbol)
                     {
                         AddSymbolIfTagged(ref symbols, symbol);
                     }
                 }
             }
-
-            if (symbols != null)
+            else if (member.IsKind(SyntaxKind.PropertyDeclaration))
             {
-                var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(ClassDeclarationSyntax);
-                List<ISymbol>? baseSymbols = null;
-                if (classSymbol?.BaseType != null)
+                if (ctx.SemanticModel.GetDeclaredSymbol(member) is ISymbol symbol)
                 {
-                    var members = classSymbol.BaseType.GetMembers();
+                    AddSymbolIfTagged(ref symbols, symbol);
+                }
+            }
+        }
+
+        if (symbols != null)
+        {
+            var classSymbol = ctx.SemanticModel.GetDeclaredSymbol(ClassDeclarationSyntax);
+            List<ISymbol>? baseSymbols = null;
+            if (classSymbol?.BaseType != null)
+            {
+                var members = classSymbol.BaseType.GetMembers();
+                {
+                    foreach (var member in members)
                     {
-                        foreach (var member in members)
+                        if (member is IFieldSymbol or
+                            IPropertySymbol)
                         {
-                            if (member is IFieldSymbol or
-                                IPropertySymbol)
-                            {
-                                AddSymbolIfTagged(ref baseSymbols, member);
-                            }
+                            AddSymbolIfTagged(ref baseSymbols, member);
                         }
                     }
                 }
 
-                return classSymbol == null ? null : new DependencyClassData(classSymbol, symbols, baseSymbols);
+                //Check the first constructor
+                if (baseSymbols == null && classSymbol.BaseType.Constructors.Length > 0)
+                {
+                    var constructor = classSymbol.BaseType.Constructors[0];
+                    if (constructor.Parameters.Length > 0)
+                    {
+                        baseSymbols = constructor.Parameters.Cast<ISymbol>().ToList();
+                    }
+                }
             }
 
-            return null;
+            return classSymbol == null ? null : new DependencyClassData(classSymbol, symbols, baseSymbols);
         }
 
-        private static void AddSymbolIfTagged(ref List<ISymbol>? symbols, ISymbol fieldSymbol)
+        return null;
+    }
+
+    private static void AddSymbolIfTagged(ref List<ISymbol>? symbols, ISymbol fieldSymbol)
+    {
+        foreach (var att in fieldSymbol.GetAttributes())
         {
-            foreach (var att in fieldSymbol.GetAttributes())
+            if (att.AttributeClass?.ToDisplayString() == attributeDisplayName)
             {
-                if (att.AttributeClass?.ToDisplayString() == attributeDisplayName)
-                {
-                    symbols ??= [];
-                    symbols.Add(fieldSymbol);
-                    return;
-                }
+                symbols ??= [];
+                symbols.Add(fieldSymbol);
+                return;
             }
         }
     }

@@ -140,6 +140,9 @@ namespace SourceDepend.CodeGenerators
                     case IPropertySymbol property:
                         variables[i] = $@"{property.Type} {property.Name.ToCamelCase()}";
                         break;
+                    case IParameterSymbol parameter:
+                        variables[i] = $@"{parameter.Type} {parameter.Name.ToCamelCase()}";
+                        break;
                 }
             }
 
@@ -159,6 +162,9 @@ namespace SourceDepend.CodeGenerators
                         break;
                     case IPropertySymbol property:
                         variables[i] = property.Name.ToCamelCase();
+                        break;
+                    case IParameterSymbol parameter:
+                        variables[i] = parameter.Name.ToCamelCase();
                         break;
                 }
             }
