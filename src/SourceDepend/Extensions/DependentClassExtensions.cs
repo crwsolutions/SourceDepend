@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SourceDepend.Model;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace SourceDepend.Extensions;
@@ -62,14 +63,24 @@ internal static class DependentClassExtensions
                     }
                 }
 
-                //Check the first constructor
-                if (baseSymbols == null && classSymbol.BaseType.Constructors.Length > 0)
+                //OK, next best: Check whether there is a default constructor, or otherwise take the first constructor
+                if (baseSymbols is null)
                 {
-                    var constructor = classSymbol.BaseType.Constructors[0];
-                    if (constructor.Parameters.Length > 0)
+                    ImmutableArray<IParameterSymbol>? parameters = null;
+                    foreach (var constructor in classSymbol.BaseType.Constructors)
                     {
-                        baseSymbols = constructor.Parameters.Cast<ISymbol>().ToList();
+                        if (constructor.Parameters.Length == 0)
+                        {
+                            goto has_default_constructor;
+                        }
+                        parameters ??= constructor.Parameters;
                     }
+
+                    if (parameters is not null)
+                    {
+                        baseSymbols = parameters.Cast<ISymbol>().ToList();
+                    }
+                    has_default_constructor:;
                 }
             }
 
