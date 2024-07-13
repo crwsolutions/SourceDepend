@@ -20,6 +20,10 @@ namespace SourceDepend.CodeGenerators
             var abstractString = classSymbol.IsAbstract ? "abstract " : "";
             var accessibilityKeyword = SyntaxFacts.GetText(classSymbol.DeclaredAccessibility);
 
+            string typeArgumentsString = classSymbol.IsGenericType ?
+                $"<{string.Join(",", classSymbol.TypeArguments.Select(t => t.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)))}>" :
+                "";
+
             var spaces = hasNameSpace ? "    " : "";
 
             // begin building the generated source
@@ -35,7 +39,7 @@ namespace SourceDepend.CodeGenerators
             }
 
             source.AppendLine($"{spaces}/// <inheritdoc/>");
-            source.AppendLine($"{spaces}{accessibilityKeyword} {abstractString}{sealedString}partial class {classSymbol.Name}");
+            source.AppendLine($"{spaces}{accessibilityKeyword} {abstractString}{sealedString}partial class {classSymbol.Name}{typeArgumentsString}");
             source.AppendLine($"{spaces}{{");
 
             _ = source.Append($"{spaces}    public {classSymbol.Name}(");
