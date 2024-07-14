@@ -1,18 +1,35 @@
 # Source Depend
 
-A source generator for C# that uses [Roslyn](https://github.com/dotnet/roslyn) (the C# compiler) to help you with dependency injection (DI). It saves you from writing the constructor because this will be written for you (during compile time). Just tag the member with a **\[Dependency\]** attribute.
+Simply tag members with a `[Dependency]` attribute and those will be added to the constructor, saving you from manual coding the constructor. Example:
+
+```csharp
+public partial class ExampleService
+{
+    [Dependency]
+    private readonly IRepository repository;
+
+    // Etc...
+}
+```
+
+A C# source generator focused on dependency injection (DI). 
 
 [![NuGet version (sourcedepend)](https://img.shields.io/nuget/v/sourcedepend?color=blue)](https://www.nuget.org/packages/sourcedepend/)
 [![License](https://img.shields.io/github/license/crwsolutions/sourcedepend.svg)](https://github.com/crwsolutions/sourcedepend/blob/master/LICENSE.txt)
 
 ### Version history
 
-- v0.1\. First implementation.
+- v1.0 Handle more complex scenarios':
+    + class without namespace should not write a namespace.
+    + repeat type arguments of generics.
+    + repeat base constructor parameter if necessary.
+    + (added unit tests).
+- v0.4\. Added null-checks.
+- v0.3\. Complete Rewrite: reorganized the code.
+    + allow one level of inheritance. 
 - v0.2\. Complete rewrite from ISourceGenerator to IIncrementalGenerator, this should boost performance
     + keep sealed and accessibility intact.
-- v0.3\. Complete Rewrite: reorganized the code.
-    + Allow one level of inheritance. 
-- v0.4\. Added null-checks.
+- v0.1\. First implementation.
 
 ## How to use it
 
