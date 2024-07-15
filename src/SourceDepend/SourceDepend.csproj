@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +9,7 @@
         <VersionSuffix Condition="'$(VersionSuffix)' == ''">0</VersionSuffix>
         <Version>1.0.$(VersionSuffix)</Version>
         <Authors>Colin Wilmans</Authors>
-        <PackageDescription>A source generator for C# that uses Roslyn (the C# compiler) to allow you to generate your constructor for injection during compile time.</PackageDescription>
+        <PackageDescription>Simply tag members with a [Dependency] attribute and those will be added to the constructor, saving you from manual coding. A C# source generator focused on dependency injection (DI).</PackageDescription>
         <RepositoryUrl>https://github.com/crwsolutions/sourcedepend.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>source generator;DI;dependency injection;[Dependency];Source depend;SourceDepend</PackageTags>
@@ -20,7 +20,6 @@
         <IsPackable>true</IsPackable>
         <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
         <IsRoslynComponent>true</IsRoslynComponent>
-        <Description>Simply tag members with a [Dependency] attribute and those will be added to the constructor, saving you from manual coding. A C# source generator focused on dependency injection (DI).</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>class without namespace should not write a namespace.
 repeat type arguments of generics.
